@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Wheel</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<style>
+body {
+    margin: 0;
+    background: #111;
+    color: white;
+    text-align: center;
+    font-family: Arial;
+}
+
+#wheel {
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    margin: 40px auto;
+    position: relative;
+    border: 6px solid white;
+    transition: transform 4s cubic-bezier(.17,.67,.83,.67);
+}
+
+button {
+    padding: 15px 40px;
+    font-size: 18px;
+    background: orange;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<h2>🎡 Крути колесо</h2>
+
+<canvas id="wheel" width="300" height="300"></canvas>
+
+<button onclick="spin()">Крутить</button>
+
+<script>
+const tg = window.Telegram.WebApp;
+tg.expand();
+
+let prizes = [];
+let spinning = false;
+
+async function loadPrizes() {
+    const response = await fetch("/prizes");
+    prizes = await response.json();
+    drawWheel();
+}
+
+function drawWheel() {
+    const canvas = document.getElementById("wheel");
+    const ctx = canvas.getContext("2d");
+    const arc = 2 * Math.PI / prizes.length;
+
+    prizes.forEach((prize, i) => {
+        ctx.beginPath();
+        ctx.fillStyle = i % 2 === 0 ? "#ff9800" : "#ff5722";
+        ctx.moveTo(150,150);
+        ctx.arc(150,150,150, arc*i, arc*(i+1));
+        ctx.fill();
+
+        ctx.save();
+        ctx.translate(150,150);
+        ctx.rotate(arc*i + arc/2);
+        ctx.fillStyle = "#fff";
+        ctx.fillText(prize.name, 40, 5);
+        ctx.restore();
+    });
+}
+
+async function spin() {
+
+    if (spinning) return;
+    spinning = true;
+
+    const response = await fetch("/spin", {method:"POST"});
+    const result = await response.json();
+
+    const index = prizes.findIndex(p => p.name === result.name);
+    const angle = 360 * 5 + (360 / prizes.length) * index;
+
+    document.getElementById("wheel").style.transform =
+        `rotate(-${angle}deg)`;
+
+    setTimeout(() => {
+        alert("Выпало: " + result.name);
+        spinning = false;
+    }, 4000);
+}
+
+loadPrizes();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,32 @@
+{
+    "prizes": [
+        {
+            "name": "Бонус 10₽",
+            "type": "bonus",
+            "value": 10,
+            "chance": 20,
+            "drops": 3
+        },
+        {
+            "name": "Купон 50",
+            "type": "coupon",
+            "value": 50,
+            "chance": 15,
+            "drops": 0
+        }
+    ],
+    "users": {
+        "5525670661": {
+            "balance": 30,
+            "coupons": 0,
+            "spins_today": 3
+        }
+    },
+    "settings": {
+        "daily_limit": 5,
+        "total_spins": 3,
+        "button_text": "Прокрутить 🎡",
+        "caption_color": "#FF4500",
+        "send_photo": true
+    }
+}
